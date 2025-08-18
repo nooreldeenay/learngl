@@ -1,1 +1,12 @@
-.vs/
+# Visual Studio build artifacts
+*.ilk
+*.obj
+*.tlog
+*.log
+*.idb
+*.pdb
+unsuccessfulbuild
+
+# Visual Studio temporary files
+*.vs
+x64/
