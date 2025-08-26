@@ -8,9 +8,15 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
 float vertices[] = {
-	-0.5f, -0.5f, 0.0f,
-	0.5f, -0.5f, 0.0f,
-	0.0f, 0.5f, 0.0f,
+	0.5f, 0.5f, 0.0f, // top-right
+	0.5f, -0.5f, 0.0f, // bottom-right
+	-0.5f, -0.5f, 0.0f, // bottom-left
+	-0.5f, 0.5f, 0.0f,// top-left
+};
+
+unsigned int indices[] = {
+	0, 1, 2,
+	2, 3, 0
 };
 
 const char* vertexShaderSource = "#version 330 core\n"
@@ -55,11 +61,16 @@ int main() {
 	unsigned int VBO;
 	glGenBuffers(1, &VBO);
 
+	unsigned int EBO;
+	glGenBuffers(1, &EBO);
+
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
@@ -112,7 +123,10 @@ int main() {
 
 		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		//glDrawArrays(GL_TRIANGLES, 0, 3);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
 
 		glfwPollEvents();
 		glfwSwapBuffers(window);
