@@ -26,4 +26,9 @@
     <None Include="vertex_shader.glsl" />
     <None Include="fragment_shader.glsl" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>

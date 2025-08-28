@@ -1,6 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include "shader.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
@@ -64,31 +65,31 @@ int main() {
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-	unsigned vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
+	//unsigned vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	//glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+	//glCompileShader(vertexShader);
 
-	unsigned fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
+	//unsigned fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	//glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	//glCompileShader(fragmentShader);
 
-	unsigned fragmentShaderYellow = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShaderYellow, 1, &fragmentShaderYellowSource, NULL);
-	glCompileShader(fragmentShaderYellow);
+	//unsigned fragmentShaderYellow = glCreateShader(GL_FRAGMENT_SHADER);
+	//glShaderSource(fragmentShaderYellow, 1, &fragmentShaderYellowSource, NULL);
+	//glCompileShader(fragmentShaderYellow);
 
-	unsigned shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
+	//unsigned shaderProgram = glCreateProgram();
+	//glAttachShader(shaderProgram, vertexShader);
+	//glAttachShader(shaderProgram, fragmentShader);
+	//glLinkProgram(shaderProgram);
 
-	unsigned shaderProgram2 = glCreateProgram();
-	glAttachShader(shaderProgram2, vertexShader);
-	glAttachShader(shaderProgram2, fragmentShaderYellow);
-	glLinkProgram(shaderProgram2);
+	//unsigned shaderProgram2 = glCreateProgram();
+	//glAttachShader(shaderProgram2, vertexShader);
+	//glAttachShader(shaderProgram2, fragmentShaderYellow);
+	//glLinkProgram(shaderProgram2);
 
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-	glDeleteShader(fragmentShaderYellow);
+	//glDeleteShader(vertexShader);
+	//glDeleteShader(fragmentShader);
+	//glDeleteShader(fragmentShaderYellow);
 
 	unsigned VBO1, VBO2, VAO1, VAO2;
 	glGenVertexArrays(1, &VAO1);
@@ -113,14 +114,18 @@ int main() {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
+	Shader ourShader("./vertex_shader.glsl", "./fragment_shader.glsl");
+
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0.3f, 0.6f, 0.7f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glUseProgram(shaderProgram);
+		//glUseProgram(shaderProgram);
+		ourShader.use();
 		glBindVertexArray(VAO1);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
-		glUseProgram(shaderProgram2);
+		//glUseProgram(shaderProgram2);
+		ourShader.use();
 		glBindVertexArray(VAO2);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 

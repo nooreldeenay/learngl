@@ -135,6 +135,9 @@
     <None Include="fragment_shader.glsl" />
     <None Include="vertex_shader.glsl" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="shader.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
