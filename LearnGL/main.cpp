@@ -9,13 +9,9 @@ const int width = 800;
 const int height = 600;
 
 float vertices[] = {
-	-0.75f, 0.25f, 0.0f,
-	-0.25f, -0.25f, 0.0f,
-	-0.75f, -0.25f, 0.0f,
-
-	0.25f, 0.25f, 0.0f,
-	0.75f, -0.25f, 0.0f,
-	0.25f, -0.25f, 0.0f,
+	0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+	0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+	-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
 };
 
 float triangle1[] = {
@@ -29,6 +25,9 @@ float triangle2[] = {
 	0.75f, -0.25f, 0.0f,
 	0.25f, -0.25f, 0.0f,
 };
+
+/*
+--- old shader usage without the new shader class ---
 
 const char* vertexShaderSource = "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
@@ -47,6 +46,7 @@ const char* fragmentShaderYellowSource = "#version 330 core\n"
 "void main() {\n"
 "FragColor = vec4(1.0f, 1.0f, 0.2f, 1.0f);\n"
 "}\0";
+*/
 
 int main() {
 	glfwInit();
@@ -65,54 +65,51 @@ int main() {
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-	//unsigned vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	//glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	//glCompileShader(vertexShader);
+	/*
+	--- old shader usage without the new shader class ---
 
-	//unsigned fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	//glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	//glCompileShader(fragmentShader);
+	unsigned vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+	glCompileShader(vertexShader);
 
-	//unsigned fragmentShaderYellow = glCreateShader(GL_FRAGMENT_SHADER);
-	//glShaderSource(fragmentShaderYellow, 1, &fragmentShaderYellowSource, NULL);
-	//glCompileShader(fragmentShaderYellow);
+	unsigned fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	glCompileShader(fragmentShader);
 
-	//unsigned shaderProgram = glCreateProgram();
-	//glAttachShader(shaderProgram, vertexShader);
-	//glAttachShader(shaderProgram, fragmentShader);
-	//glLinkProgram(shaderProgram);
+	unsigned fragmentShaderYellow = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShaderYellow, 1, &fragmentShaderYellowSource, NULL);
+	glCompileShader(fragmentShaderYellow);
 
-	//unsigned shaderProgram2 = glCreateProgram();
-	//glAttachShader(shaderProgram2, vertexShader);
-	//glAttachShader(shaderProgram2, fragmentShaderYellow);
-	//glLinkProgram(shaderProgram2);
+	unsigned shaderProgram = glCreateProgram();
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
+	glLinkProgram(shaderProgram);
 
-	//glDeleteShader(vertexShader);
-	//glDeleteShader(fragmentShader);
-	//glDeleteShader(fragmentShaderYellow);
+	unsigned shaderProgram2 = glCreateProgram();
+	glAttachShader(shaderProgram2, vertexShader);
+	glAttachShader(shaderProgram2, fragmentShaderYellow);
+	glLinkProgram(shaderProgram2);
 
-	unsigned VBO1, VBO2, VAO1, VAO2;
-	glGenVertexArrays(1, &VAO1);
-	glGenVertexArrays(1, &VAO2);
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+	glDeleteShader(fragmentShaderYellow);
+	*/
 
-	glGenBuffers(1, &VBO1);
-	glGenBuffers(1, &VBO2);
+	unsigned VBO, VAO;
+	glGenVertexArrays(1, &VAO);
 
-	glBindVertexArray(VAO1);
+	glGenBuffers(1, &VBO);
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO1);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle1), triangle1, GL_STATIC_DRAW);
+	glBindVertexArray(VAO);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	glBindVertexArray(VAO2);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO2);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle2), triangle2, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	Shader ourShader("./vertex_shader.glsl", "./fragment_shader.glsl");
 
@@ -122,11 +119,7 @@ int main() {
 
 		//glUseProgram(shaderProgram);
 		ourShader.use();
-		glBindVertexArray(VAO1);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-		//glUseProgram(shaderProgram2);
-		ourShader.use();
-		glBindVertexArray(VAO2);
+		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		glfwPollEvents();
