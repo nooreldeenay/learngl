@@ -4,6 +4,7 @@
 #include "shader.h"
 #include "stb_image.h"
 
+void processInput(GLFWwindow* window, float* mixFactor);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 const int width = 800;
@@ -11,10 +12,10 @@ const int height = 600;
 
 float vertices[] = {
 	// positions          // colors           // texture coords
-	 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   0.55f, 0.55f,   // top right
-	 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   0.45f, 0.55f,   // bottom right
-	-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.45f, 0.45f,   // bottom left
-	-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.55f, 0.45f    // top left 
+	 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+	 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
+	-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+	-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
 };
 
 int indices[] = {
@@ -174,7 +175,7 @@ int main() {
 	}
 	else
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 
@@ -184,7 +185,12 @@ int main() {
 	glUniform1i(glGetUniformLocation(ourShader.ID, "texture1"), 0);
 	ourShader.setInt("texture2", 1);
 
+	float mixFactor = 0.5f;
+
+
 	while (!glfwWindowShouldClose(window)) {
+		processInput(window, &mixFactor);
+
 		glClearColor(0.3f, 0.6f, 0.7f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
@@ -195,6 +201,8 @@ int main() {
 		glBindTexture(GL_TEXTURE_2D, textureFace);
 
 		ourShader.use();
+		//glUniform1f(glGetUniformLocation(ourShader.ID, "mixFactor"), mixFactor);
+		ourShader.setFloat("mixFactor", mixFactor);
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		//glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -207,6 +215,18 @@ int main() {
 	return 0;
 }
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+void processInput(GLFWwindow* window, float* mixFactor)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, GLFW_TRUE);
+
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) *mixFactor += 0.01f;
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) *mixFactor -= 0.01f;
+
+	if (*mixFactor < 0.0f) *mixFactor = 0.0f;
+	else if (*mixFactor > 1.0f) *mixFactor = 1.0f;
+}
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
 	glViewport(0, 0, width, height);
 }
