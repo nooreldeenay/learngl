@@ -190,13 +190,6 @@ int main() {
 
 	float mixFactor = 0.5f;
 
-	Shader shader2("./vertex_shader.glsl", "./fragment_shader.glsl");
-	shader2.use();
-	glUniform1i(glGetUniformLocation(shader2.ID, "texture1"), 0);
-	shader2.setInt("texture2", 1);
-
-	ourShader.use();
-
 	while (!glfwWindowShouldClose(window)) {
 		processInput(window, &mixFactor);
 
@@ -211,34 +204,15 @@ int main() {
 
 		ourShader.use();
 
-		glm::mat4 trans(1.0);
-		trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
-		trans = glm::rotate(trans, (float) glfwGetTime(), glm::vec3(0.0, 0.0, 1.0));
+		glm::mat4 model(1.0);
 
 		unsigned transformLoc = glGetUniformLocation(ourShader.ID, "transform");
-		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-		//glUniform1f(glGetUniformLocation(ourShader.ID, "mixFactor"), mixFactor);
 		ourShader.setFloat("mixFactor", mixFactor);
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		//glDrawArrays(GL_TRIANGLES, 0, 3);
-
-		shader2.use();
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, textureCrate);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, textureFace);
-		shader2.setFloat("mixFactor", mixFactor);
-
-		glm::mat4 trans2(1.0);
-		trans2 = glm::translate(trans2, glm::vec3(-0.5, 0.5, 0.0));
-		trans2 = glm::scale(trans2, glm::vec3(sin(glfwGetTime()), sin(glfwGetTime()), 0.0));
-
-		unsigned tloc = glGetUniformLocation(shader2.ID, "transform");
-		glUniformMatrix4fv(tloc, 1, GL_FALSE, glm::value_ptr(trans2));
-		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glfwPollEvents();
 		glfwSwapBuffers(window);
