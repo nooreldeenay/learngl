@@ -251,22 +251,54 @@ int main() {
 
 		ourShader.use();
 
-		glm::mat4 model(1.0);
-		model = glm::rotate(model, (float) glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0));
+		glm::vec3 positions[] = {
+			glm::vec3(0.0, 0.0, 0.0),
+			glm::vec3(2.0, 1.0, 0.5),
+			glm::vec3(-3.0, -2.0, -2.0),
+			glm::vec3(1.0, -3.0, -10.0),
+			glm::vec3(-2.0, 2.0, -6.0),
+		};
 
-		glm::mat4 view(1.0);
-		view = glm::translate(view, glm::vec3(0.0, 0.0, -3.0));
+		const float radius = 10.0f;
+		float camX = cos(0.5f * glfwGetTime()) * radius;
+		float camZ = sin(0.5f * glfwGetTime()) * radius;
+
+		glm::mat4 view;
+		view = glm::lookAt(
+			glm::vec3(camX, 5.0, camZ),
+			glm::vec3(-2.0, 2.0, -6.0),
+			glm::vec3(0.0, 1.0, 0.0)
+		);
+
+		/*
+		how the lookat function calculates its steps:
+
+		glm::vec3 cameraPos = glm::vec3(0.0, 0.0, 3.0);
+		glm::vec3 cameraTarget = glm::vec3(0.0, 0.0, 0.0);
+		glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget); // actually the reverse direction
+		glm::vec3 up = glm::vec3(0.0, 1.0, 0.0);
+		glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
+		glm::vec3 cameraUp = glm::cross(cameraDirection, cameraRight);
+		*/
 
 		glm::mat4 projection;
 		projection = glm::perspective(glm::radians(45.0f), (float)width / height, 0.1f, 100.0f);
 
-		ourShader.setMat4("model", model);
-		ourShader.setMat4("view", view);
-		ourShader.setMat4("projection", projection);
+		for (int i = 0; i < 5; ++i) {
+			glm::mat4 model(1.0f);
+			model = glm::translate(model, positions[i]);
 
-		glBindVertexArray(VAO);
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+			model = glm::rotate(model, glm::radians(20.0f * i), glm::normalize(glm::vec3(0.7f, 0.2f, 1.0f)));
+
+			ourShader.setMat4("model", model);
+			ourShader.setMat4("view", view);
+			ourShader.setMat4("projection", projection);
+
+			glBindVertexArray(VAO);
+			//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
+
 
 		glfwPollEvents();
 		glfwSwapBuffers(window);
